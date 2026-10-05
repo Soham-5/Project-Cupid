@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VibeCheck — Wingman Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@700;800&family=Caveat:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#eee7d8;--paper:#f8f2e7;--paper2:#e2d9c7;--ink:#10100f;--lime:#c9ef43;--pink:#ed71ba;--lav:#a58be6;--muted:#625c52;--black:#11110f}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#151515}
+body{font-family:"IBM Plex Sans",sans-serif;display:flex;justify-content:center;padding:24px}
+.phone{width:min(395px,96vw);min-height:860px;background:var(--cream);position:relative;overflow:hidden;border-radius:34px;box-shadow:0 22px 75px rgba(0,0,0,.42)}
+.status{height:47px;padding:13px 21px 0;display:flex;justify-content:space-between;font:600 12px/1 "IBM Plex Sans"}
+.icons{display:flex;gap:8px;opacity:.7}
+main{padding:5px 21px 116px}
+.screen{display:none}
+.screen.active{display:block}
+.header{display:grid;grid-template-columns:47px 1fr auto;gap:13px;align-items:center;margin:10px 2px 34px}
+.logo-paper{width:47px;height:47px;background:var(--paper);display:grid;place-items:center;clip-path:polygon(2% 3%,98% 0,100% 93%,8% 100%,0 10%);transform:rotate(-2deg);box-shadow:2px 3px 6px rgba(0,0,0,.11)}
+.logo-paper img{width:43px;height:43px;object-fit:contain}
+.wordmark{font:700 38px/0.95 Kalam,cursive;letter-spacing:-.02em}
+.tagline{font:600 14px/1 Caveat,cursive;color:var(--muted);margin-top:7px}
+.header-note{font:700 13px/1 Caveat,cursive;background:var(--pink);padding:6px 9px 5px;transform:rotate(3deg);clip-path:polygon(2% 10%,96% 0,100% 90%,4% 100%)}
+.section-title{display:flex;align-items:flex-end;justify-content:space-between;margin:0 5px 9px}
+.section-title h2{margin:0;font:800 25px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em}
+.section-title span{font:600 15px/1 Caveat,cursive;color:var(--muted)}
+.cutout{position:relative;background:var(--paper);padding:20px 19px 18px;box-shadow:0 10px 17px rgba(0,0,0,.12);clip-path:polygon(0 2%,12% 0,25% 1.2%,39% .1%,54% 1.3%,68% .3%,82% 1%,100% 0,99% 22%,100% 45%,99% 67%,100% 98%,88% 99%,76% 98%,63% 100%,49% 98.6%,36% 100%,22% 98.5%,8% 100%,0 98%,1% 75%,0 51%,1% 28%)}
+.cutout + .cutout{margin-top:24px}
+.mission-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px dashed rgba(16,16,15,.28);padding-bottom:11px}
+.eyebrow{font:800 18px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em}
+.hand{font:600 15px/1 Caveat,cursive;color:var(--muted)}
+.friend-list{display:grid;gap:12px;margin-top:15px}
+.friend{display:grid;grid-template-columns:43px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(16,16,15,.14);cursor:pointer}
+.friend:last-child{border-bottom:0}
+.initial{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--ink);font:800 18px/1 "Barlow Condensed",sans-serif;clip-path:polygon(6% 0,93% 3%,100% 90%,10% 100%,0 12%)}
+.friend:nth-child(1) .initial{background:var(--lav);transform:rotate(-3deg)}
+.friend:nth-child(2) .initial{background:var(--lime);transform:rotate(2deg)}
+.friend:nth-child(3) .initial{background:var(--pink);transform:rotate(-2deg)}
+.friend-name{font:700 16px/1 "IBM Plex Sans",sans-serif}
+.friend-sub{font:400 13px/1.25 "IBM Plex Sans",sans-serif;color:var(--muted);margin-top:4px}
+.friend-go{font:700 20px/1 Caveat,cursive;transform:rotate(-4deg)}
+.note-strip{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(16,16,15,.12);padding-top:13px;margin-top:5px}
+.note-strip .hand{font-size:18px}
+.black-btn{border:0;background:var(--black);color:var(--cream);border-radius:999px;padding:10px 14px;font:600 12px "IBM Plex Sans";cursor:pointer}
+.back{display:inline-flex;gap:8px;align-items:center;background:none;border:0;padding:0;margin:2px 0 16px;font:600 18px Caveat,cursive;color:var(--ink);cursor:pointer}
+.page-title{font:700 34px/1 Kalam,cursive;margin:0}
+.page-kicker{font:600 15px/1.15 Caveat,cursive;color:var(--muted);margin-top:7px}
+.person-paper{position:relative;width:245px;margin:18px auto 0;background:#f7f1e6;padding:14px 14px 16px;box-shadow:10px 12px 0 rgba(16,16,15,.9);transform:rotate(-1deg);clip-path:polygon(1% 0,98% 2%,100% 96%,3% 100%,0 5%)}
+.photo-placeholder{height:290px;background:var(--lav);position:relative;overflow:hidden;clip-path:polygon(2% 0,99% 1%,100% 98%,1% 100%,0 5%)}
+.photo-placeholder:before{content:"";position:absolute;width:90px;height:90px;border:3px solid var(--ink);border-radius:50%;left:50%;top:68px;transform:translateX(-50%);background:#f4eee2}
+.photo-placeholder:after{content:"";position:absolute;width:155px;height:105px;border:3px solid var(--ink);border-bottom:0;border-radius:90px 90px 0 0;left:50%;bottom:0;transform:translateX(-50%);background:#f4eee2}
+.profile-label{display:flex;justify-content:space-between;align-items:baseline;margin-top:13px}
+.profile-name{font:800 25px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em}
+.profile-age{font:700 14px/1 "IBM Plex Sans"}
+.traits{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.trait{padding:6px 9px 5px;border:1.5px solid var(--ink);font:600 12px "IBM Plex Sans";background:#fff9ec;clip-path:polygon(2% 7%,98% 0,100% 90%,4% 100%)}
+.trait:nth-child(2){background:var(--lime)}
+.trait:nth-child(3){background:var(--pink)}
+.actions{display:flex;justify-content:space-between;align-items:center;margin:20px 1px 0}
+.action{width:51px;height:51px;border:2px solid var(--ink);background:var(--paper);font:800 24px/1 "IBM Plex Sans";cursor:pointer;clip-path:polygon(4% 0,96% 4%,100% 92%,10% 100%,0 8%)}
+.action.yes{width:64px;height:64px;background:var(--lime);font-size:29px;transform:rotate(2deg)}
+.action.no{transform:rotate(-2deg)}
+.action-label{font:600 15px Caveat,cursive;color:var(--muted)}
+.swipe-note{text-align:center;margin:14px 0 0;font:600 19px Caveat,cursive;color:var(--muted);transform:rotate(-2deg)}
+.context-paper{margin-top:19px;background:var(--paper2);padding:15px 16px;clip-path:polygon(0 2%,99% 0,100% 94%,3% 100%,1% 9%)}
+.context-paper strong{font:800 14px "Barlow Condensed";letter-spacing:.04em}
+.context-paper p{margin:6px 0 0;font:400 14px/1.35 "IBM Plex Sans";color:#45413a}
+.complete{text-align:center;padding-top:34px}
+.complete h2{font:700 35px Kalam,cursive;margin:0}
+.complete p{font:400 14px/1.45 "IBM Plex Sans";color:var(--muted);max-width:275px;margin:10px auto 18px}
+.nav{position:absolute;left:0;right:0;bottom:0;height:99px;background:var(--paper);display:grid;grid-template-columns:repeat(6,1fr);align-items:center;padding:10px 7px 17px;clip-path:polygon(0 8%,10% 4%,20% 7%,31% 3%,44% 7%,56% 4%,68% 7%,81% 3%,91% 7%,100% 2%,100% 100%,0 100%)}
+.nav-item{text-align:center;color:var(--ink);font-size:9px}
+.nav-icon{width:31px;height:31px;margin:0 auto 4px;display:grid;place-items:center;font-size:20px}
+.nav-item.active .nav-icon{background:var(--lime);clip-path:polygon(4% 8%,91% 0,100% 15%,93% 92%,13% 100%,0 80%)}
+.nav-label{font-size:9px}
+.nav-wing{width:27px;height:27px;object-fit:contain;mix-blend-mode:multiply}
+.hint{font:600 17px Caveat,cursive;color:var(--muted)}
+@media(max-width:430px){body{padding:0}.phone{width:100vw;min-height:100vh;border-radius:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="status"><span>9:41</span><span class="icons"><span>◔</span><span>⌁</span><span>▮▮</span><span>▰</span></span></div>
+
+<main>
+<section id="home" class="screen active">
+<header class="header">
+<div class="logo-paper">🪽</div>
+<div><div class="wordmark">Wingman</div><div class="tagline">your friend, your mission</div></div>
+<div class="header-note">on call</div>
+</header>
+
+<div class="section-title"><h2>MY PEOPLE</h2><span>who you're wingman for</span></div>
+<div class="cutout">
+<div class="mission-top"><div class="eyebrow">PICK A MISSION</div><div class="hand">then find their person →</div></div>
+<div class="friend-list">
+<div class="friend" onclick="showFriend('x')"><div class="initial">X</div><div><div class="friend-name">X</div><div class="friend-sub">your friend · blind-date setup</div></div><div class="friend-go">→</div></div>
+<div class="friend" onclick="showFriend('y')"><div class="initial">Y</div><div><div class="friend-name">Y</div><div class="friend-sub">your friend · blind-date setup</div></div><div class="friend-go">→</div></div>
+<div class="friend" onclick="showFriend('z')"><div class="initial">Z</div><div><div class="friend-name">Z</div><div class="friend-sub">your friend · blind-date setup</div></div><div class="friend-go">→</div></div>
+</div>
+<div class="note-strip"><div class="hand">choose a friend →</div><button class="black-btn" onclick="go('people')">see all</button></div>
+</div>
+
+</section>
+
+<section id="people" class="screen">
+<button class="back" onclick="go('home')">← Wingman</button>
+<div class="page-title">My People</div>
+<div class="page-kicker">Friends who've trusted you to be their wingman.</div>
+<div class="cutout" style="margin-top:19px">
+<div class="mission-top"><div class="eyebrow">WHO ARE YOU WINGMAN FOR?</div><div class="hand">your missions</div></div>
+<div class="friend-list">
+<div class="friend" onclick="showFriend('x')"><div class="initial">X</div><div><div class="friend-name">X</div><div class="friend-sub">easy conversation · low-key dates</div></div><div class="friend-go">→</div></div>
+<div class="friend" onclick="showFriend('y')"><div class="initial">Y</div><div><div class="friend-name">Y</div><div class="friend-sub">music · spontaneous plans</div></div><div class="friend-go">→</div></div>
+<div class="friend" onclick="showFriend('z')"><div class="initial">Z</div><div><div class="friend-name">Z</div><div class="friend-sub">same humour · no pretence</div></div><div class="friend-go">→</div></div>
+</div>
+</div>
+<div class="hint" style="margin:18px 7px">tap a friend → find their person</div>
+</section>
+
+<section id="swipe" class="screen">
+<button class="back" onclick="go(returnScreen)">← <span id="backLabel">Wingman</span></button>
+<div class="page-title">Find Their Person</div>
+<div class="page-kicker" id="swipeKicker">blind-date scout · X</div>
+
+<div class="person-paper">
+<div class="photo-placeholder" id="photo"></div>
+<div class="profile-label"><div class="profile-name" id="profileName">MAYA</div><div class="profile-age" id="profileAge">21</div></div>
+<div class="traits" id="traits"><div class="trait">film nights</div><div class="trait">coffee</div><div class="trait">dry humour</div></div>
+</div>
+
+<div class="actions">
+<button class="action no" onclick="nextProfile()" aria-label="Pass">×</button>
+<div class="action-label">not their vibe?</div>
+<button class="action yes" onclick="likeProfile()" aria-label="Maybe">♡</button>
+<div class="action-label">could work?</div>
+</div>
+<div class="swipe-note">swipe through → don't overthink it</div>
+
+<div class="context-paper"><strong>FOR YOUR FRIEND</strong><p id="friendContext">X likes low-key plans, good conversation and people who don't take themselves too seriously.</p></div>
+</section>
+
+<section id="done" class="screen">
+<button class="back" onclick="go('swipe')">← back to profiles</button>
+<div class="complete"><div style="font-size:54px">✦</div><h2>Nice eye.</h2><p>You found someone worth putting in front of your friend. Keep scouting or send the setup when it feels right.</p><button class="black-btn" onclick="go('swipe')">keep scouting →</button><div class="hint" style="margin-top:17px">one good match is enough.</div></div>
+</section>
+</main>
+
+<nav class="nav">
+<div class="nav-item"><div class="nav-icon">⌂</div><div class="nav-label">home</div></div>
+<div class="nav-item"><div class="nav-icon">□</div><div class="nav-label">plans</div></div>
+<div class="nav-item"><div class="nav-icon">♡</div><div class="nav-label">match</div></div>
+<div class="nav-item"><div class="nav-icon">☺</div><div class="nav-label">vibes</div></div>
+<div class="nav-item active"><div class="nav-icon">🪽</div><div class="nav-label">wingman</div></div>
+<div class="nav-item"><div class="nav-icon">♙</div><div class="nav-label">you</div></div>
+</nav>
+</div>
+
+<script>
+const profiles=[
+{name:"MAYA",age:"21",traits:["film nights","coffee","dry humour"],bg:"lav",context:"X likes low-key plans, good conversation and people who don't take themselves too seriously."},
+{name:"RIYA",age:"22",traits:["indie gigs","books","chaotic good"],bg:"lime",context:"Y is into spontaneous plans, music, and people who don't make things awkward."},
+{name:"TARA",age:"21",traits:["late walks","art","bad puns"],bg:"pink",context:"Z wants someone with the same humour, good energy, and absolutely no pretence."}
+];
+let pi=0;
+let currentFriend='x';
+let returnScreen='home';
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function showFriend(friend){currentFriend=friend;pi=0;returnScreen=document.getElementById('people').classList.contains('active')?'people':'home';document.getElementById('swipeKicker').textContent='blind-date scout · '+friend.toUpperCase();document.getElementById('backLabel').textContent=returnScreen==='people'?'My People':'Wingman';go('swipe');renderProfile();}
+function renderProfile(){const p=profiles[pi%profiles.length];document.getElementById('profileName').textContent=p.name;document.getElementById('profileAge').textContent=p.age;document.getElementById('friendContext').textContent=p.context;document.getElementById('photo').style.background={'lav':'var(--lav)','lime':'var(--lime)','pink':'var(--pink)'}[p.bg];const t=document.getElementById('traits');t.innerHTML='';p.traits.forEach(x=>{const el=document.createElement('div');el.className='trait';el.textContent=x;t.appendChild(el);});}
+function nextProfile(){pi++;if(pi>=profiles.length){go('done');return;}renderProfile();}
+function likeProfile(){pi++;if(pi>=profiles.length){go('done');return;}renderProfile();}
+</script>
+</body>
+</html>

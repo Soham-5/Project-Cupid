@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dating_app/main.dart';
@@ -48,8 +49,33 @@ void main() {
     expect(find.text('vibes & moments'), findsOneWidget);
     expect(find.textContaining('STANDS OUT'), findsOneWidget);
 
-    // 5. Switch to Profile Screen (Screen 3: "ARJUN, 21")
-    container.read(activeBottomNavIndexProvider.notifier).state = 4;
+    // 5. Switch to Wingman Screen (Screen 5: "MY PEOPLE" & blind-date scout)
+    await tester.tap(find.text('wingman'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('MY PEOPLE'), findsOneWidget);
+    expect(find.text('PICK A MISSION'), findsOneWidget);
+    expect(find.text('your friend · blind-date setup'), findsWidgets);
+
+    // Tap Friend X to open scouting screen
+    await tester.tap(find.text('X').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Find Their Person'), findsOneWidget);
+    expect(find.text('blind-date scout · X'), findsOneWidget);
+    expect(find.text('MAYA'), findsOneWidget);
+    expect(find.text('film nights'), findsOneWidget);
+
+    // Scroll down and tap heart button
+    final heartBtn = find.byIcon(Icons.favorite_rounded);
+    await tester.ensureVisible(heartBtn);
+    await tester.pumpAndSettle();
+    await tester.tap(heartBtn);
+    await tester.pumpAndSettle();
+
+    expect(find.text('RIYA'), findsOneWidget);
+
+    // 6. Switch to Profile Screen (Screen 3: "ARJUN, 21")
     await tester.tap(find.text('you'));
     await tester.pumpAndSettle();
 

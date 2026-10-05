@@ -7,6 +7,7 @@ import '../../features/plans/plans_screen.dart';
 import '../../features/match/match_screen.dart';
 import '../../features/vibes/vibes_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/wingman/presentation/wingman_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -44,6 +45,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/vibes',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: VibesScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/wingman',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: WingmanScreen(),
             ),
           ),
           GoRoute(
