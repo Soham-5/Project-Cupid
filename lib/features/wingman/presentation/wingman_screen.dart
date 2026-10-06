@@ -7,6 +7,7 @@ import '../widgets/wingman_candidate_card.dart';
 import '../widgets/wingman_cutout_card.dart';
 import '../widgets/wingman_friend_tile.dart';
 import '../widgets/wingman_header.dart';
+import '../workspace/wingman_workspace.dart';
 
 enum WingmanSubScreen { home, people, swipe, done }
 
@@ -88,6 +89,157 @@ class _WingmanScreenState extends State<WingmanScreen> {
     }
   }
 
+  Widget _buildWorkspaceFriendTile(
+    WorkspaceFriendSummary friend, {
+    bool showDivider = true,
+  }) {
+    return InkWell(
+      onTap: () {
+        WorkspaceSlideRoute.open(
+          context,
+          WingmanWorkspaceScreen(friend: friend),
+        );
+      },
+      splashColor: Colors.transparent,
+      highlightColor: Colors.black.withValues(alpha: 0.04),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          border: showDivider
+              ? Border(
+                  bottom: BorderSide(
+                    color: AppColors.nearBlack.withValues(alpha: 0.14),
+                    width: 1,
+                  ),
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            // Initial Badge
+            Transform.rotate(
+              angle: friend.badgeRotationDeg * (math.pi / 180),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: friend.badgeColor,
+                    border: Border.all(color: AppColors.nearBlack, width: 2),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    friend.initial,
+                    style: GoogleFonts.barlowCondensed(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.nearBlack,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+
+            // Friend Name & Tags
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        friend.name,
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.nearBlack,
+                        ),
+                      ),
+                      Text(
+                        ', ${friend.age}',
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.nearBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 3),
+                  _buildHighlightedSubtitle(friend),
+                ],
+              ),
+            ),
+
+            // Arrow
+            Transform.rotate(
+              angle: -4 * (math.pi / 180),
+              child: Text(
+                '→',
+                style: GoogleFonts.caveat(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.nearBlack,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHighlightedSubtitle(WorkspaceFriendSummary friend) {
+    if (friend.highlightedWord == null) {
+      return Text(
+        friend.subtitle,
+        style: GoogleFonts.ibmPlexSans(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF625C52),
+          height: 1.25,
+        ),
+      );
+    }
+
+    final parts = friend.subtitle.split(friend.highlightedWord!);
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.ibmPlexSans(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF625C52),
+          height: 1.25,
+        ),
+        children: [
+          TextSpan(text: parts[0]),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              decoration: BoxDecoration(
+                color: AppColors.lime,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                friend.highlightedWord!,
+                style: GoogleFonts.ibmPlexSans(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.nearBlack,
+                ),
+              ),
+            ),
+          ),
+          if (parts.length > 1) TextSpan(text: parts[1]),
+        ],
+      ),
+    );
+  }
+
   // ==========================================
   // SCREEN 1: WINGMAN HOME (MISSION PICKER)
   // ==========================================
@@ -164,15 +316,15 @@ class _WingmanScreenState extends State<WingmanScreen> {
               const SizedBox(height: 8),
 
               // Friend List
-              ...List.generate(WingmanMockData.friends.length, (index) {
-                final friend = WingmanMockData.friends[index];
-                final isLast = index == WingmanMockData.friends.length - 1;
-                return WingmanFriendTile(
-                  friend: friend,
-                  showDivider: !isLast,
-                  onTap: () => _selectFriend(friend),
-                );
+              ...List.generate(WorkspaceMockData.defaultFriends.length, (index) {
+                final wf = WorkspaceMockData.defaultFriends[index];
+                return _buildWorkspaceFriendTile(wf, showDivider: true);
               }),
+              WingmanFriendTile(
+                friend: WingmanMockData.friends.first,
+                showDivider: false,
+                onTap: () => _selectFriend(WingmanMockData.friends.first),
+              ),
 
               const SizedBox(height: 10),
 
@@ -307,6 +459,10 @@ class _WingmanScreenState extends State<WingmanScreen> {
               ),
               const SizedBox(height: 12),
 
+              ...List.generate(WorkspaceMockData.defaultFriends.length, (index) {
+                final wf = WorkspaceMockData.defaultFriends[index];
+                return _buildWorkspaceFriendTile(wf, showDivider: true);
+              }),
               ...List.generate(WingmanMockData.friends.length, (index) {
                 final friend = WingmanMockData.friends[index];
                 final isLast = index == WingmanMockData.friends.length - 1;
