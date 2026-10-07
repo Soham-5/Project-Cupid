@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../features/wingman/wingman_config.dart';
+import '../../features/wingman/widgets/wingman_doodle.dart';
 import 'torn_paper.dart';
 
-enum NavTab { home, plans, match, vibes, you }
+enum NavTab { home, plans, match, vibes, wingman, you }
 
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -18,6 +20,7 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
+    final isWingmanEnabled = WingmanConfig.enabled;
 
     return Container(
       decoration: BoxDecoration(
@@ -37,7 +40,12 @@ class CustomBottomNav extends StatelessWidget {
         ),
         child: Container(
           color: AppColors.cream,
-          padding: EdgeInsets.fromLTRB(16, 12, 16, bottomInset > 0 ? bottomInset + 4 : 12),
+          padding: EdgeInsets.fromLTRB(
+            isWingmanEnabled ? 8 : 16,
+            10,
+            isWingmanEnabled ? 8 : 16,
+            bottomInset > 0 ? bottomInset + 4 : 10,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -73,13 +81,24 @@ class CustomBottomNav extends StatelessWidget {
                 activeIcon: Icons.sentiment_very_satisfied_rounded,
                 onTap: () => onTabSelected(3),
               ),
+              if (isWingmanEnabled)
+                _NavItem(
+                  index: 4,
+                  isSelected: currentIndex == 4,
+                  label: 'wingman',
+                  icon: Icons.diversity_1_outlined,
+                  activeIcon: Icons.diversity_1_rounded,
+                  customIcon: const WingmanDoodle(size: 20, color: AppColors.nearBlack),
+                  customActiveIcon: const WingmanDoodle(size: 20, color: AppColors.nearBlack),
+                  onTap: () => onTabSelected(4),
+                ),
               _NavItem(
-                index: 4,
-                isSelected: currentIndex == 4,
+                index: isWingmanEnabled ? 5 : 4,
+                isSelected: currentIndex == (isWingmanEnabled ? 5 : 4),
                 label: 'you',
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
-                onTap: () => onTabSelected(4),
+                onTap: () => onTabSelected(isWingmanEnabled ? 5 : 4),
               ),
             ],
           ),
@@ -95,6 +114,8 @@ class _NavItem extends StatefulWidget {
   final String label;
   final IconData icon;
   final IconData activeIcon;
+  final Widget? customIcon;
+  final Widget? customActiveIcon;
   final VoidCallback onTap;
 
   const _NavItem({
@@ -103,6 +124,8 @@ class _NavItem extends StatefulWidget {
     required this.label,
     required this.icon,
     required this.activeIcon,
+    this.customIcon,
+    this.customActiveIcon,
     required this.onTap,
   });
 
@@ -143,44 +166,59 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        widget.onTap();
-        _bounceController.forward(from: 0.0);
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              width: 38,
-              height: 32,
-              decoration: BoxDecoration(
-                color: widget.isSelected ? AppColors.lime : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                widget.isSelected ? widget.activeIcon : widget.icon,
-                size: 21,
-                color: AppColors.nearBlack,
+    final Widget iconWidget;
+    if (widget.isSelected && widget.customActiveIcon != null) {
+      iconWidget = widget.customActiveIcon!;
+    } else if (widget.customIcon != null) {
+      iconWidget = widget.customIcon!;
+    } else {
+      iconWidget = Icon(
+        widget.isSelected ? widget.activeIcon : widget.icon,
+        size: 20,
+        color: AppColors.nearBlack,
+      );
+    }
+
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          widget.onTap();
+          _bounceController.forward(from: 0.0);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                width: 36,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: widget.isSelected ? AppColors.lime : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: iconWidget,
               ),
             ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            widget.label,
-            style: AppTextStyles.bodySans(
-              fontSize: 11,
-              fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: AppColors.nearBlack,
+            const SizedBox(height: 2),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                widget.label,
+                maxLines: 1,
+                style: AppTextStyles.bodySans(
+                  fontSize: 10.5,
+                  fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: AppColors.nearBlack,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
